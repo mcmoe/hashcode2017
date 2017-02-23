@@ -56,7 +56,7 @@ public class Main {
             EndPoint endPoint = new EndPoint(l.get(0), l.get(1));
             IntStream.range(i, i + endPoint.getNumberOfCacheServicesConectedTo()).forEach(j -> {
                List<Integer> cacheServerInfo = parseLine(lines.get(j));
-               final CacheServer cacheServer = cacheServerMap.putIfAbsent(cacheServerInfo.get(0), new CacheServer(cacheServerInfo.get(0)));
+               final CacheServer cacheServer = cacheServerMap.putIfAbsent(cacheServerInfo.get(0), new CacheServer(cacheServerInfo.get(0), infra.getCapacityOfCacheServersInMB()));
                infra.addCacheServer(cacheServer);
                endPoint.addCacheServer(cacheServer, cacheServerInfo.get(1));
             });
@@ -70,7 +70,6 @@ public class Main {
             ++i;
          }
       }
-      System.out.println();
    }
 
    private static List<Integer> parseLine(String s) {

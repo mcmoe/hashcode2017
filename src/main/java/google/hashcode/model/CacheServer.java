@@ -1,21 +1,31 @@
 package google.hashcode.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 public class CacheServer {
-   final int id;
+   private final int id;
+   private final int capacity;
 
-   final List<Video> videosThatCanBeRequestedByEndpoint = new ArrayList<>();
+   private final List<Video> videosThatCanBeRequestedByEndpoint = new ArrayList<>();
 
-
-   public CacheServer(int id) {
+   public CacheServer(int id, int capacity) {
       this.id = id;
+      this.capacity = capacity;
    }
 
    public int getId() {
       return id;
+   }
+
+   public int getCapacity() {
+      return capacity;
+   }
+
+   public List<Video> getVideosThatCanBeRequestedByEndpoint() {
+      return Collections.unmodifiableList(videosThatCanBeRequestedByEndpoint);
    }
 
    @Override
