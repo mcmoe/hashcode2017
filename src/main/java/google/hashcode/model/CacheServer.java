@@ -2,14 +2,16 @@ package google.hashcode.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class CacheServer {
    private final int id;
    private final int capacity;
 
-//   private final List<Video> videosThatCanBeRequestedByEndpoint = new ArrayList<>();
+   private final Map<Video, Integer> videosThatCanBeRequestedByEndpoint = new HashMap<>();
 
    public CacheServer(int id, int capacity) {
       this.id = id;

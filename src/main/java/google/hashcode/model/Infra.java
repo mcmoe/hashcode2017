@@ -66,4 +66,20 @@ public class Infra {
       cacheServers.put(cacheServer.getId(), cacheServer);
       return cacheServer;
    }
+
+   public List<Request> getRequests() {
+      return requests;
+   }
+
+   public Map<Integer, Video> getVideos() {
+      return videos;
+   }
+
+   public Map<Integer, EndPoint> getEndPoints() {
+      return endPoints;
+   }
+
+   public Map<Integer, CacheServer> getCacheServers() {
+      return cacheServers;
+   }
 }
