@@ -26,7 +26,7 @@ public class Main {
       // TODO
    }
 
-   private static Infra parseIn(String inputFile) throws IOException, URISyntaxException {
+   public static Infra parseIn(String inputFile) throws IOException, URISyntaxException {
       final List<String> lines = Files.readAllLines(Paths.get(Main.class.getResource(inputFile).toURI()));
       String infraAsString = lines.get(0);
       final Matcher matcher = Pattern.compile("(\\d+){1} (\\d+){1} (\\d+){1} (\\d+){1} (\\d+){1}").matcher(infraAsString);
