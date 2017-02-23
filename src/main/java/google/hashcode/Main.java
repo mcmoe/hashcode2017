@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -23,49 +22,53 @@ import google.hashcode.model.Video;
 public class Main {
 
    public static void main(String[] args) throws IOException, URISyntaxException {
-      Infra infra = new Infra();
+
       final List<String> lines = Files.readAllLines(Paths.get(Main.class.getResource("kittens.in").toURI()));
       String infraAsString = lines.get(0);
       final Matcher matcher = Pattern.compile("(\\d+){1} (\\d+){1} (\\d+){1} (\\d+){1} (\\d+){1}").matcher(infraAsString);
 
-      /* Parse first line */
+      /* Parse first line. Basic infra data */
       matcher.find();
-      infra.setNumberOfVideos(Integer.valueOf(matcher.group(1)));
-      infra.setNumberOfEndpoints(Integer.valueOf(matcher.group(2)));
-      infra.setNumberOfRequests(Integer.valueOf(matcher.group(3)));
-      infra.setNumberOfCacheServers(Integer.valueOf(matcher.group(4)));
-      infra.setCapacityOfCacheServersInMB(Integer.valueOf(matcher.group(5)));
+      Infra infra = new Infra(Integer.valueOf(matcher.group(1)),
+        Integer.valueOf(matcher.group(2)),
+        Integer.valueOf(matcher.group(3)),
+        Integer.valueOf(matcher.group(4)),
+        Integer.valueOf(matcher.group(5)));
 
-      /* Parse second line */
+      /* Parse second line. Add all videos */
       String[] videosSize = lines.get(1).split(" ");
       if(videosSize.length != infra.getNumberOfVideos()) {
          throw new IllegalArgumentException();
       }
-      final List<Video> videos = Arrays.stream(videosSize).map(Integer::valueOf).map(Video::new).collect(Collectors.toList());
+      IntStream.range(0, videosSize.length)
+        .mapToObj(i -> new Video(i, Integer.valueOf(videosSize[i])))
+        .forEach(infra::addVideo);
+
 
       Map<Integer, CacheServer> cacheServerMap = new HashMap<>();
 
-      for(int i = 2; i < lines.size();) {
+      for(int i = 2 ; i < lines.size();) {
          List<Integer> l = parseLine(lines.get(i));
+
          if(l.size() == 2) {
+            /* Add the endpoints */
             ++i;
             EndPoint endPoint = new EndPoint(l.get(0), l.get(1));
             IntStream.range(i, i + endPoint.getNumberOfCacheServicesConectedTo()).forEach(j -> {
                List<Integer> cacheServerInfo = parseLine(lines.get(j));
                final CacheServer cacheServer = cacheServerMap.putIfAbsent(cacheServerInfo.get(0), new CacheServer(cacheServerInfo.get(0)));
+               infra.addCacheServer(cacheServer);
                endPoint.addCacheServer(cacheServer, cacheServerInfo.get(1));
             });
+            infra.addEndPoint(endPoint);
             i += endPoint.getNumberOfCacheServicesConectedTo();
          } else {
+            /* Add the requests */
             List<Integer> requestInfo = parseLine(lines.get(i));
             Request request = new Request(requestInfo.get(0), requestInfo.get(1), requestInfo.get(2));
             infra.addRequest(request);
             ++i;
          }
-
-
-
-
       }
       System.out.println();
    }
