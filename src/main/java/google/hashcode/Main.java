@@ -1,4 +1,4 @@
-package google.hascode;
+package google.hashcode;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -8,7 +8,7 @@ import java.nio.file.Paths;
 public class Main {
 
    public static void main(String[] args) throws IOException, URISyntaxException {
-      Files.lines(Paths.get(Main.class.getResource("kittens.in").toURI()));
+      Files.lines(Paths.get(Main.class.getResource("google/hashcode/kittens.in").toURI()));
       System.out.println();
    }
 }
