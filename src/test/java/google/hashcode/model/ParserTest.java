@@ -57,16 +57,16 @@ public class ParserTest {
         Request requestVideo3 = infra.getRequests().stream().filter(request -> request.getVideoId() == 3).findFirst().get();
         assertThat(requestVideo3.endpointId).isEqualTo(0);
         assertThat(requestVideo3.numberOfRequests).isEqualTo(1500);
+
         Request requestVideo0 = infra.getRequests().stream().filter(request -> request.getVideoId() == 0).findFirst().get();
+        assertThat(requestVideo0.endpointId).isEqualTo(1);
+        assertThat(requestVideo0.numberOfRequests).isEqualTo(1000);
         Request requestVideo4 = infra.getRequests().stream().filter(request -> request.getVideoId() == 4).findFirst().get();
+        assertThat(requestVideo4.endpointId).isEqualTo(0);
+        assertThat(requestVideo4.numberOfRequests).isEqualTo(500);
         Request requestVideo1 = infra.getRequests().stream().filter(request -> request.getVideoId() == 1).findFirst().get();
+        assertThat(requestVideo1.endpointId).isEqualTo(0);
+        assertThat(requestVideo1.numberOfRequests).isEqualTo(1000);
     }
-/*
- Endpoint 1 has 500ms datacenter latency and is not connected to a cache.
- 1500 requests for video 3 coming from endpoint 0.
- 1000 requests for video 0 coming from endpoint 1.
- 500 requests for video 4 coming from endpoint 0.
- 1000 requests for video 1 coming from endpoint 0.
- */
 
 }
