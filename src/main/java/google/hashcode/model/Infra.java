@@ -1,8 +1,10 @@
 package google.hashcode.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class Infra {
@@ -13,9 +15,9 @@ public class Infra {
    final int capacityOfCacheServersInMB;
 
    final List<Request> requests = new ArrayList<>();
-   final List<Video> videos = new ArrayList<>();
-   final List<EndPoint> endPoints = new ArrayList<>();
-   final Set<CacheServer> cacheServers = new HashSet<>();
+   final Map<Integer, Video> videos = new HashMap<>();
+   final Map<Integer, EndPoint> endPoints = new HashMap<>();
+   final Map<Integer, CacheServer> cacheServers = new HashMap<>();
 
    public Infra(int numberOfVideos, int numberOfEndpoints, int numberOfRequests, int numberOfCacheServers, int capacityOfCacheServersInMB) {
       this.numberOfVideos = numberOfVideos;
@@ -51,17 +53,17 @@ public class Infra {
    }
 
    public Video addVideo(Video v) {
-      videos.add(v);
+      videos.put(v.getId(), v);
       return v;
    }
 
    public EndPoint addEndPoint(EndPoint endPoint) {
-      endPoints.add(endPoint);
+      endPoints.put(endPoint.getId(), endPoint);
       return endPoint;
    }
 
    public CacheServer addCacheServer(CacheServer cacheServer) {
-      cacheServers.add(cacheServer);
+      cacheServers.put(cacheServer.getId(), cacheServer);
       return cacheServer;
    }
 }

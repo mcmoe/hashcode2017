@@ -9,7 +9,7 @@ public class CacheServer {
    private final int id;
    private final int capacity;
 
-   private final List<Video> videosThatCanBeRequestedByEndpoint = new ArrayList<>();
+//   private final List<Video> videosThatCanBeRequestedByEndpoint = new ArrayList<>();
 
    public CacheServer(int id, int capacity) {
       this.id = id;
@@ -24,9 +24,9 @@ public class CacheServer {
       return capacity;
    }
 
-   public List<Video> getVideosThatCanBeRequestedByEndpoint() {
-      return Collections.unmodifiableList(videosThatCanBeRequestedByEndpoint);
-   }
+//   public List<Video> getVideosThatCanBeRequestedByEndpoint() {
+//      return Collections.unmodifiableList(videosThatCanBeRequestedByEndpoint);
+//   }
 
    @Override
    public boolean equals(Object o) {
@@ -45,7 +45,7 @@ public class CacheServer {
       return Objects.hash(id);
    }
 
-   public void addVideo(Video v) {
-      videosThatCanBeRequestedByEndpoint.add(v);
-   }
+//   public void addVideo(Video v) {
+//      videosThatCanBeRequestedByEndpoint.add(v);
+//   }
 }
