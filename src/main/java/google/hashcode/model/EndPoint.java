@@ -50,4 +50,8 @@ public class EndPoint {
    public int hashCode() {
       return Objects.hash(id);
    }
+
+   public Map<CacheServer, Integer> getLatencyToCacheServers() {
+      return latencyToCacheServers;
+   }
 }
