@@ -3,13 +3,17 @@ package google.hashcode;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 import google.hashcode.model.CacheServer;
 import google.hashcode.model.EndPoint;
 import google.hashcode.model.Infra;
+import google.hashcode.model.Request;
 
 public class Solver {
-   static int findCostVideosForCache(Infra infra) {
+   public static int findCostVideosForCache(Infra infra) {
       Map<CacheServer, Integer> remaningCapacity = new HashMap<>();
       infra.getCacheServers().values().forEach(c -> {
          remaningCapacity.put(c, c.getCapacity());
@@ -35,8 +39,10 @@ public class Solver {
          remaningCapacity.put(gain.cacheServer, remaningCapacity.get(gain.cacheServer) - v.getSizeInMB());
          return gain.gain;
       }).sum();
-      System.out.println(result);
-      return result;
+
+      int totalRequests = infra.getRequests().stream().mapToInt(Request::getNumberOfRequests).sum();
+      int finalResult = (result * 1000) / totalRequests;
+      return finalResult;
    }
 
    static class Gain implements Comparable<Gain> {

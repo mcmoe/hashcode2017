@@ -1,6 +1,7 @@
 package google.hashcode.model;
 
 import google.hashcode.Main;
+import google.hashcode.Solver;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -24,6 +25,13 @@ import static org.fest.assertions.Assertions.assertThat;
  * Created by mkobeissi on 23/02/2017.
  */
 public class ParserTest {
+
+    @Test
+    public void solve() throws IOException, URISyntaxException {
+        Infra infra = Main.parseIn("example.in");
+        int costVideosForCache = Solver.findCostVideosForCache(infra);
+        System.out.println("cost reduction: " + costVideosForCache);
+    }
 
     @Test
     public void ensure_parser_matches_problem_example() throws IOException, URISyntaxException {
