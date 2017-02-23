@@ -22,8 +22,12 @@ import google.hashcode.model.Video;
 public class Main {
 
    public static void main(String[] args) throws IOException, URISyntaxException {
+      Infra infra = parseIn("kittens.in");
+      // TODO
+   }
 
-      final List<String> lines = Files.readAllLines(Paths.get(Main.class.getResource("kittens.in").toURI()));
+   private static Infra parseIn(String inputFile) throws IOException, URISyntaxException {
+      final List<String> lines = Files.readAllLines(Paths.get(Main.class.getResource(inputFile).toURI()));
       String infraAsString = lines.get(0);
       final Matcher matcher = Pattern.compile("(\\d+){1} (\\d+){1} (\\d+){1} (\\d+){1} (\\d+){1}").matcher(infraAsString);
 
@@ -70,6 +74,8 @@ public class Main {
             ++i;
          }
       }
+
+      return infra;
    }
 
    private static List<Integer> parseLine(String s) {
