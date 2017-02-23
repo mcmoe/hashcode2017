@@ -52,11 +52,11 @@ public class Main {
 
          if(l.size() == 2) {
             /* Add the endpoints */
+            EndPoint endPoint = new EndPoint(i - 2, l.get(0), l.get(1));
             ++i;
-            EndPoint endPoint = new EndPoint(l.get(0), l.get(1));
             IntStream.range(i, i + endPoint.getNumberOfCacheServicesConectedTo()).forEach(j -> {
                List<Integer> cacheServerInfo = parseLine(lines.get(j));
-               final CacheServer cacheServer = cacheServerMap.putIfAbsent(cacheServerInfo.get(0), new CacheServer(cacheServerInfo.get(0), infra.getCapacityOfCacheServersInMB()));
+               final CacheServer cacheServer = new CacheServer(cacheServerInfo.get(0), infra.getCapacityOfCacheServersInMB());
                infra.addCacheServer(cacheServer);
                endPoint.addCacheServer(cacheServer, cacheServerInfo.get(1));
             });
