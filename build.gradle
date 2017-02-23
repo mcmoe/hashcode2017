@@ -1,0 +1,31 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+
+group = 'google.hascode'
+
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+    hibernateVersion = '5.2.7.Final'
+    jerseyVersion = '2.26-b02'
+    jettyVersion = '9.4.1.v20170120'
+    log4jVersion = '2.8'
+}
+
+repositories {
+    maven { url "http://nexus-pop.fr.murex.com/nexus/content/groups/pop-snapshots/"}
+    maven { url "http://nexus-pop.fr.murex.com/nexus/content/groups/pop-releases/"}
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+
+    compile group: 'com.google.guava', name: 'guava', version:'21.0'
+
+}
+
