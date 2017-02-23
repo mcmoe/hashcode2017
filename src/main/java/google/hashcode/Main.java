@@ -50,13 +50,14 @@ public class Main {
 
 
       Map<Integer, CacheServer> cacheServerMap = new HashMap<>();
+      int endpoint = 0;
 
       for(int i = 2 ; i < lines.size();) {
          List<Integer> l = parseLine(lines.get(i));
 
          if(l.size() == 2) {
             /* Add the endpoints */
-            EndPoint endPoint = new EndPoint(i - 2, l.get(0), l.get(1));
+            EndPoint endPoint = new EndPoint(endpoint++, l.get(0), l.get(1));
             ++i;
             IntStream.range(i, i + endPoint.getNumberOfCacheServicesConectedTo()).forEach(j -> {
                List<Integer> cacheServerInfo = parseLine(lines.get(j));
