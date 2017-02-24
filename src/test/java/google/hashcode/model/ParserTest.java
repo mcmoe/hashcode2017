@@ -1,15 +1,29 @@
 package google.hashcode.model;
 
 import google.hashcode.Main;
-import google.hashcode.Solver;
+import google.hashcode.SolverPlusPlus;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 /**
+ * 5 2 4 3 100
+ * 50 50 80 30 110
+ * 1000 3
+ * 0 100
+ * 2 200
+ * 1 300
+ * 500 0
+ * 3 0 1500
+ * 0 1 1000
+ * 4 0 500
+ * 1 0 1000
+ *
  * 5 videos, 2 endpoints, 4 request descriptions, 3 caches 100MB each.
  * Videos 0, 1, 2, 3, 4 have sizes 50MB, 50MB, 80MB, 30MB, 110MB.
  * Endpoint 0 has 1000ms datacenter latency and is connected to 3 caches:
@@ -28,9 +42,36 @@ public class ParserTest {
 
     @Test
     public void solve() throws IOException, URISyntaxException {
-        Infra infra = Main.parseIn("example.in");
-        int costVideosForCache = Solver.findCostVideosForCache(infra);
+        List<String> fileNames = Arrays.asList(
+                /*0*/"me_at_the_zoo.in",
+                /*1*/"kittens.in",
+                /*2*/"trending_today.in",
+                /*3*/"videos_worth_spreading.in",
+                /*4*/"example.in");
+        Infra infra = Main.parseIn(fileNames.get(1));
+        int costVideosForCache = SolverPlusPlus.solve(infra);
+        SolverPlusPlus.printActiveCaches(infra);
         System.out.println("cost reduction: " + costVideosForCache);
+    }
+
+    @Test
+    public void solveAll() throws IOException, URISyntaxException {
+        List<String> fileNames = Arrays.asList(
+                /*0*/"me_at_the_zoo.in",
+                /*1*/"kittens.in",
+                /*2*/"trending_today.in",
+                /*3*/"videos_worth_spreading.in",
+                /*4*/"example.in");
+
+        fileNames.forEach(s -> {
+            try {
+                Infra infra = Main.parseIn(s);
+                int costVideosForCache = SolverPlusPlus.solve(infra);
+                System.out.println("cost reduction (" + s + "): " + costVideosForCache);
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     @Test

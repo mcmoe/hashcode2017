@@ -6,6 +6,7 @@ public class Request {
    final int videoId;
    final int endpointId;
    final int numberOfRequests;
+   private CacheServer cacheServer;
 
    public Request(int videoId, int endpointId, int numberOfRequests) {
       this.videoId = videoId;
@@ -41,5 +42,13 @@ public class Request {
    @Override
    public int hashCode() {
       return Objects.hash(videoId, endpointId);
+   }
+
+   public void setCacheServer(CacheServer cacheServer) {
+      this.cacheServer = cacheServer;
+   }
+
+   public CacheServer getCacheServer() {
+      return cacheServer;
    }
 }
