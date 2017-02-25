@@ -54,4 +54,8 @@ public class EndPoint {
    public Map<CacheServer, Integer> getLatencyToCacheServers() {
       return latencyToCacheServers;
    }
+
+   public Integer getLatencyToCacheServer(CacheServer c) {
+      return latencyToCacheServers.get(c.getId());
+   }
 }

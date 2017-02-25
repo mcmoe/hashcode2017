@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,18 +61,22 @@ public class ParserTest {
                 /*0*/"me_at_the_zoo.in",
                 /*1*/"kittens.in",
                 /*2*/"trending_today.in",
-                /*3*/"videos_worth_spreading.in",
-                /*4*/"example.in");
+                /*3*/"videos_worth_spreading.in");
+
+        List<Integer> dataSetScores = new ArrayList<>();
 
         fileNames.forEach(s -> {
             try {
                 Infra infra = Main.parseIn(s);
                 int costVideosForCache = SolverPlusPlus.solve(infra);
                 System.out.println("cost reduction (" + s + "): " + costVideosForCache);
+                dataSetScores.add(costVideosForCache);
             } catch (IOException | URISyntaxException e) {
                 e.printStackTrace();
             }
         });
+
+        System.out.println("total score: " + dataSetScores.stream().mapToInt(i -> i).sum());
     }
 
     @Test

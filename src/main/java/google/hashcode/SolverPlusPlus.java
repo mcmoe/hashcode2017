@@ -29,14 +29,15 @@ public class SolverPlusPlus {
             List<Request> sortedRequests = requests.stream().sorted((o1, o2) -> Integer.compare(getRequestPriority(infra, o2), getRequestPriority(infra, o1)))
                     .collect(Collectors.toList());
 
-            List<Map.Entry<CacheServer, Integer>> connectedCaches = endPoint.getLatencyToCacheServers().entrySet().stream().collect(Collectors.toList());
-            List<Map.Entry<CacheServer, Integer>> sortedCaches = connectedCaches.stream().sorted((o1, o2) -> Integer.compare(o1.getValue(), o2.getValue())).collect(Collectors.toList());
+            List<Map.Entry<CacheServer, Integer>> connectedViableCaches = endPoint.getLatencyToCacheServers().entrySet().stream()
+                    .filter(c -> c.getValue() < endPoint.getLatencyToDataCenter()).collect(Collectors.toList());
+
+            List<CacheServer> sortedCaches = connectedViableCaches.stream().sorted((o1, o2) -> Integer.compare(o1.getValue(), o2.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
 
             sortedRequests.forEach(request -> {
                 Video video = infra.getVideos().get(request.getVideoId());
-                sortedCaches.stream().filter(cacheServerIntegerEntry -> canHoldVideo(cacheServerIntegerEntry.getKey(), video))
-                .findFirst().ifPresent(cacheServerIntegerEntry -> {
-                    CacheServer cacheServer = cacheServerIntegerEntry.getKey();
+                sortedCaches.stream().filter(cacheServer -> canHoldOrContainsVideo(cacheServer, video))
+                .findFirst().ifPresent(cacheServer -> {
                     cacheServer.addVideo(video);
                     request.setCacheServer(cacheServer);
                 });
@@ -69,23 +70,23 @@ public class SolverPlusPlus {
     }
 
     private static double getAverageSavings(Infra infra) {
-        int totalSavings = infra.getRequests().stream().mapToInt(request -> {
+        double totalSavings = infra.getRequests().stream().mapToDouble(request -> {
             EndPoint endPoint = infra.getEndPoints().get(request.getEndpointId());
-            int latencyToDataCenter = endPoint.getLatencyToDataCenter();
-            Integer latencyToCacheServer = latencyToDataCenter;
+            double latencyToDataCenter = endPoint.getLatencyToDataCenter();
+            double latencyToCacheServer = latencyToDataCenter;
             if(request.getCacheServer() != null) {
                 latencyToCacheServer = endPoint.getLatencyToCacheServers().get(request.getCacheServer());
             }
             return (latencyToDataCenter - latencyToCacheServer) * request.getNumberOfRequests();
         }).sum();
 
-        int totalRequests = infra.getRequests().stream().mapToInt(Request::getNumberOfRequests).sum();
+        double totalRequests = infra.getRequests().stream().mapToInt(Request::getNumberOfRequests).sum();
 
-        return (double) totalSavings / (double) totalRequests;
+        return totalSavings / totalRequests;
     }
 
-    private static boolean canHoldVideo(CacheServer cacheServer, Video video) {
-        return cacheServer.getFreeSpace() >= video.getSizeInMB();
+    private static boolean canHoldOrContainsVideo(CacheServer cacheServer, Video video) {
+        return cacheServer.getFreeSpace() >= video.getSizeInMB() || cacheServer.hasVideo(video);
     }
 
     private static int getRequestPriority(Infra infra, Request request) {
