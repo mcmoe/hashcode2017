@@ -1,6 +1,1 @@
-pluginRepositories {
-    maven { url "http://nexus-pop.fr.murex.com/nexus/content/groups/pop-releases/"}
-    gradlePluginPortal()
-}
-
 rootProject.name = 'hashcode2017'

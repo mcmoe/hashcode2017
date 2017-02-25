@@ -86,17 +86,6 @@ buildNumber.properties
 .mvn/timing.properties
 
 # ---------------------------------------------------------------------------------------
-# Polymer : https://github.com/PolymerElements/polymer-starter-kit/blob/master/.gitignore
-# ---------------------------------------------------------------------------------------
-
-node_modules
-dist
-test/temp
-bower_components
-.tmp
-test/bower_components/
-
-# ---------------------------------------------------------------------------------------
 # OSX : https://github.com/github/gitignore/blob/master/Global/OSX.gitignore
 # ---------------------------------------------------------------------------------------
 .DS_Store
