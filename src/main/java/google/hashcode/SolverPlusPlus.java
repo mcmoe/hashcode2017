@@ -12,27 +12,27 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
+ * Figures out which videos to put in which caches in order to decrease overall latency of the system
+ * Finally calculates the score based on the average latency reduction per request
  * Created by mkobeissi on 23/02/2017.
  */
 public class SolverPlusPlus {
 
 
+    /**
+     * The idea is to sort the endpoints in order to start with the endpoint that will potentially provide
+     * the highest latency reduction so as to  fill the caches with those requests first.
+     * This way if there are endpoints that don't end up with cached videos they should be of least impact
+     * to final score.
+     * @param infra the model parsed from the input files containing all the info about the data set
+     * @return the final score of the data set SUM((data center latency - new latency) * # requests) / SUM(# requests) * 1000
+     */
     public static int solve(Infra infra) {
 
-        List<EndPoint> endPointList = infra.getEndPoints().values().stream().collect(Collectors.toList());
-        List<EndPoint> sortedEndPoints = endPointList.stream().sorted((o1, o2) -> compareEndpointLatency(o1, o2, infra)).collect(Collectors.toList());
-
+        List<EndPoint> sortedEndPoints = getSortedEndPoints(infra);
         sortedEndPoints.forEach(endPoint -> {
-            List<Request> requests = infra.getRequests().stream()
-                    .filter(request -> request.getEndpointId() == endPoint.getId()).collect(Collectors.toList());
-
-            List<Request> sortedRequests = requests.stream().sorted((o1, o2) -> Integer.compare(getRequestPriority(infra, o2), getRequestPriority(infra, o1)))
-                    .collect(Collectors.toList());
-
-            List<Map.Entry<CacheServer, Integer>> connectedViableCaches = endPoint.getLatencyToCacheServers().entrySet().stream()
-                    .filter(c -> c.getValue() < endPoint.getLatencyToDataCenter()).collect(Collectors.toList());
-
-            List<CacheServer> sortedCaches = connectedViableCaches.stream().sorted((o1, o2) -> Integer.compare(o1.getValue(), o2.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+            List<Request> sortedRequests = getSortedRequests(infra, endPoint);
+            List<CacheServer> sortedCaches = getSortedCaches(endPoint);
 
             sortedRequests.forEach(request -> {
                 Video video = infra.getVideos().get(request.getVideoId());
@@ -44,12 +44,45 @@ public class SolverPlusPlus {
             });
         });
 
-
         //printActiveCaches(infra);
+        return generateSavings(infra);
+    }
+
+    private static int generateSavings(Infra infra) {
         double averageSavings = getAverageSavings(infra);
         return (int) (averageSavings * 1000);
     }
 
+    private static List<CacheServer> getSortedCaches(EndPoint endPoint) {
+        List<Map.Entry<CacheServer, Integer>> connectedViableCaches = endPoint.getLatencyToCacheServers().entrySet().stream()
+                .filter(c -> c.getValue() < endPoint.getLatencyToDataCenter()).collect(Collectors.toList());
+
+        return connectedViableCaches.stream().sorted((o1, o2) -> Integer.compare(o1.getValue(), o2.getValue())).map(Map.Entry::getKey).collect(Collectors.toList());
+    }
+
+    private static List<Request> getSortedRequests(Infra infra, EndPoint endPoint) {
+        List<Request> requests = infra.getRequests().stream()
+                .filter(request -> request.getEndpointId() == endPoint.getId()).collect(Collectors.toList());
+        return requests.stream().sorted((o1, o2) -> Integer.compare(getRequestPriority(infra, o2), getRequestPriority(infra, o1)))
+                .collect(Collectors.toList());
+    }
+
+    private static List<EndPoint> getSortedEndPoints(Infra infra) {
+        List<EndPoint> endPointList = infra.getEndPoints().values().stream().collect(Collectors.toList());
+        return endPointList.stream().sorted((o1, o2) -> compareEndpointLatency(o1, o2, infra)).collect(Collectors.toList());
+    }
+
+
+    /**
+     * With the given data sets, taking the number of requests into account when prioritizing did not make much difference.
+     * I've opted to do without them as they slow down the run by about 30 seconds.
+     * The calculation is therefore based on the latency to data center minus the minimum latency to a connected cache
+     * The larger this number, the more the priority is for the endpoint
+     * @param o1 first end point
+     * @param o2 seconf end point
+     * @param infra the model - in case needed to calculate total requests per endpoint
+     * @return the comparison result as the usual -1, 0, 1
+     */
     private static int compareEndpointLatency(EndPoint o1, EndPoint o2, Infra infra) {
         Integer o2MinCache = o2.getLatencyToCacheServers().values().stream().min(Comparator.naturalOrder()).orElse(o2.getLatencyToDataCenter());
         Integer o1MinCache = o1.getLatencyToCacheServers().values().stream().min(Comparator.naturalOrder()).orElse(o1.getLatencyToDataCenter());
